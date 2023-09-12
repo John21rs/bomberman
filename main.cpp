@@ -36,7 +36,7 @@ void desenhar_bomba(int i, int j, int m[TAM][TAM]){
     }
 }
 
-void mapa(int x, int y, int m[TAM][TAM], int &bomba, int s, int d, int &inimigo, int &jogador, int &tempo){
+void mapa(int x, int y, int m[TAM][TAM], int &bomba, int s, int d, int &inimigo, int &jogador, int &tempo, bool bomba_tempo){
     cout<<tempo;
         for(int i=0;i<TAM;i++){
             for(int j=0;j<TAM;j++){
@@ -50,7 +50,7 @@ void mapa(int x, int y, int m[TAM][TAM], int &bomba, int s, int d, int &inimigo,
                                 case 1: cout<<char(219); break; //parede
                                 case 2: cout <<char(178);  break; // parede que pode ser quebrada
                                 case 3: if(bomba != 0) { break; } else { cout << char(208); bomba = bomba + 1; desenhar_bomba(i,j, m); } break; //bomba
-                                case 4: if(tempo == 1) {cout << char(158); m[i][j] = 0;bomba = 0; tempo = 0;} break; // explosão bomba
+                                case 4: if(tempo == 1 && bomba_tempo == 1) {cout << char(158); m[i][j] = 0;bomba = 0; tempo = 0;} break; // explosão bomba
                             }
                         }
             }
@@ -63,6 +63,8 @@ void mapa(int x, int y, int m[TAM][TAM], int &bomba, int s, int d, int &inimigo,
         jogador = 0;
         }
 }
+
+bool bomba_tempo = 5;
 
 int quantidade(int number, int m[TAM][TAM]){
     int contador = 0;
@@ -141,6 +143,7 @@ void mover(int &x,int &y, int m[TAM][TAM], int inimigo) {
     }
 
 int main(){
+
         HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
         CONSOLE_CURSOR_INFO     cursorInfo;
 
@@ -193,7 +196,7 @@ int main(){
                     bomba=0;
                 }
             }
-            mapa(x,y, m, bomba, s,d, inimigo, jogador, tempo);
+            mapa(x,y, m, bomba, s,d, inimigo, jogador, tempo, bomba_tempo);
             if (_kbhit()){
                 tecla = getch();
                 verificar_posicao(x,y, m, tecla);
