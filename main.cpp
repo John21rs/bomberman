@@ -7,6 +7,19 @@
 
 using namespace std;
 
+void tempo(int tempo){
+        clock_t inicio, fim;
+        inicio = clock();
+        bool temp = true;
+        while(temp == true){
+            fim = clock();
+            if ((fim-inicio)/CLOCKS_PER_SEC == tempo) {
+                temp = false;
+                break;
+            }
+        }
+}
+
 void desenhar_bomba(int i, int j, int m[TAM][TAM]){
     m[i][j] = 4;
     if(m[i+1][j] != 1){
@@ -24,6 +37,7 @@ void desenhar_bomba(int i, int j, int m[TAM][TAM]){
 }
 
 void mapa(int x, int y, int m[TAM][TAM], int &bomba, int s, int d, int &inimigo, int &jogador, int &tempo){
+    cout<<tempo;
         for(int i=0;i<TAM;i++){
             for(int j=0;j<TAM;j++){
                 if(i==x && j==y){
@@ -166,9 +180,7 @@ int main(){
         char tecla;
         bool jogo = true;
         clock_t inicio, fim;
-
         while(jogo == true){
-
             paredes = quantidade(2, m);
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
             if(bomba==0){
@@ -176,26 +188,24 @@ int main(){
             }
             if(bomba == 1){
                 fim = clock();
-
                 if ((fim-inicio)/CLOCKS_PER_SEC == 5) {
                     tempo = 1;
                     bomba=0;
                 }
             }
             mapa(x,y, m, bomba, s,d, inimigo, jogador, tempo);
-            cout<<(fim-inicio)/CLOCKS_PER_SEC;
             if (_kbhit()){
                 tecla = getch();
                 verificar_posicao(x,y, m, tecla);
                 mover(s, d, m, inimigo);
             } else if((x == s && y == d) || jogador == 0){
                 setlocale(LC_ALL, "Portuguese");
-                //system("cls");
+                system("cls");
                 jogo = false;
                 cout << "Você Perdeu! O inimigo te capturou ou a bomba explodiu no jogador";
             } else if(paredes == 0 || inimigo == 0){
                 setlocale(LC_ALL, "Portuguese");
-                //system("cls");
+                system("cls");
                 jogo = false;
                 cout << "Você Ganhou!";
             }
