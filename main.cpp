@@ -36,13 +36,8 @@ void desenhar_bomba(int i, int j, int m[TAM][TAM]){
     }
 }
 
-void mapa(int x, int y, int m[TAM][TAM], int &bomba, int s, int d, int &inimigo, int &jogador){
-        if(m[s][d] == 4){
-            inimigo = 0;
-        }
-        if(m[x][y] == 4){
-        jogador = 0;
-        }
+void mapa(int x, int y, int m[TAM][TAM], int &bomba, int s, int d, int &inimigo, int &jogador, int &tempo){
+    cout<<tempo;
         for(int i=0;i<TAM;i++){
             for(int j=0;j<TAM;j++){
                 if(i==x && j==y){
@@ -55,11 +50,17 @@ void mapa(int x, int y, int m[TAM][TAM], int &bomba, int s, int d, int &inimigo,
                                 case 1: cout<<char(219); break; //parede
                                 case 2: cout <<char(178);  break; // parede que pode ser quebrada
                                 case 3: if(bomba != 0) { break; } else { cout << char(208); bomba = bomba + 1; desenhar_bomba(i,j, m); } break; //bomba
-                                case 4: cout << char(158); tempo(5); m[i][j] = 0;bomba = 0; break; // explosão bomba
+                                case 4: if(tempo == 1) {cout << char(158); m[i][j] = 0;bomba = 0; tempo = 0;} break; // explosão bomba
                             }
                         }
             }
             cout<<"\n";
+        }
+        if(m[s][d] == 4){
+            inimigo = 0;
+        }
+        if(m[x][y] == 4){
+        jogador = 0;
         }
 }
 
@@ -175,25 +176,41 @@ int main(){
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
         };
 
-        int x=5, y=5, bomba = 0, s = 8, d = 5, inimigo = 1, paredes = 0, jogador = 1;
+        int x=5, y=5, bomba = 0, s = 8, d = 5, inimigo = 1, paredes = 0, jogador = 1, tempo = 0;
         char tecla;
         bool jogo = true;
+        clock_t inicio, fim;
+
         while(jogo == true){
+
             paredes = quantidade(2, m);
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-            mapa(x,y, m, bomba, s,d, inimigo, jogador);
+            if(bomba==0){
+                inicio = clock();
+            }
+            if(bomba == 1){
+                fim = clock();
+
+                if ((fim-inicio)/CLOCKS_PER_SEC == 5) {
+                    tempo = 1;
+                    bomba=0;
+                    cout<<"tempo";
+                }
+            }
+            mapa(x,y, m, bomba, s,d, inimigo, jogador, tempo);
+            cout<<(fim-inicio)/CLOCKS_PER_SEC;
             if (_kbhit()){
                 tecla = getch();
                 verificar_posicao(x,y, m, tecla);
                 mover(s, d, m, inimigo);
             } else if((x == s && y == d) || jogador == 0){
                 setlocale(LC_ALL, "Portuguese");
-                system("cls");
+                //system("cls");
                 jogo = false;
-                cout << "Você Perdeu! O inimigo te capturou ou a bomba explodiu no jogador";
+                cout << "Você Perdeu! O inimigo te capturou ou a bomba explodiu no jogador"<<tempo<<bomba;
             } else if(paredes == 0 || inimigo == 0){
                 setlocale(LC_ALL, "Portuguese");
-                system("cls");
+                //system("cls");
                 jogo = false;
                 cout << "Você Ganhou!";
             }
